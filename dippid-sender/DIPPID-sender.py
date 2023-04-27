@@ -15,7 +15,6 @@ y = 0.0
 #var frequency
 sin_frequency = 1
 
-#if no button click, print with "normal" speed
 while True:
     y = np.sin(sin_frequency * x)
     message = '{"coordinate(x,y)" : (' + str(x) + ',' + str(y) + ')}'
@@ -24,6 +23,7 @@ while True:
     sock.sendto(message.encode(), (IP, PORT))
 
     x += 0.1
+    #change frequency
     sin_frequency += 0.01
     time.sleep(0.1)
     
