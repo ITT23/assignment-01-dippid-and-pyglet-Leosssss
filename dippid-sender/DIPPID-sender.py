@@ -8,11 +8,11 @@ PORT = 5700
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 counter = 0
-#coordinate x&y
+# coordinate x&y
 x = 0.0
 y = 0.0
 
-#var frequency
+# var frequency
 sin_frequency = 1
 
 while True:
@@ -23,7 +23,7 @@ while True:
     sock.sendto(message.encode(), (IP, PORT))
 
     x += 0.1
-    #change frequency
+    # change frequency
     sin_frequency += 0.01
     time.sleep(0.1)
     

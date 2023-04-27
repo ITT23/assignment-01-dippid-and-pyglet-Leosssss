@@ -11,11 +11,11 @@ sensor = SensorUDP(PORT)
 WINDOW_WIDTH = 300
 WINDOW_HEIGHT = 500
 WINDOW_TITLE = "Tetris"
-#draw a window
+# draw a window
 win = window.Window(WINDOW_WIDTH,WINDOW_HEIGHT,WINDOW_TITLE)
 batch = pyglet.graphics.Batch()
 
-#a set of colors
+# a set of colors
 ORANGE = (255,155,1)
 YELLOW = (255,255,1)
 RED = (255,1,1)
