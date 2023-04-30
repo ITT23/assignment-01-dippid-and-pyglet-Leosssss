@@ -237,10 +237,10 @@ def updatePlayground(element_index, pos_x, pos_y, el_width):
         playground[len(playground)-2-int(pos_y/10)][int(pos_x/10)+1] = 1
         
         
-    #for i in range(len(playground)):
-     #   for j in range(len(playground[i])):
-      #      print(playground[i][j], end=' ')
-       # print()
+    for i in range(len(playground)):
+        for j in range(len(playground[i])):
+            print(playground[i][j], end=' ')
+        print()
         
 
 def create_elements(dt):
@@ -265,7 +265,7 @@ def on_draw():
     else:
         moving_right = True
         moving_left = False
-    print('capabilities: ', sensor.get_value('accelerometer')['x'], "; moving left: ", moving_left, "; moving right: ", moving_right)
+    #print('capabilities: ', sensor.get_value('accelerometer')['x'], "; moving left: ", moving_left, "; moving right: ", moving_right)
     
     for element in elements:
         batch.draw()
