@@ -25,8 +25,6 @@ sensor = SensorUDP(PORT)
 
 # draw a window
 win = window.Window(WINDOW_WIDTH,WINDOW_HEIGHT,WINDOW_TITLE)
-# add background image
-image = pyglet.resource.image('pixelated-image.jpg') # https://www.freepik.com/free-photo/pixelated-image_946034.htm#query=tetris&position=24&from_view=search&track=robertav1_2_sidr
 # init a two dimension array as playground to check if a "pixel(SQUARE_LENGTH*SQUARE_LENGTH)" is free
 playground = [[0]*round(WINDOW_WIDTH/SQUARE_LENGTH) for i in range(round(WINDOW_HEIGHT/SQUARE_LENGTH))] # cite from: https://stackoverflow.com/questions/2397141/how-to-initialize-a-two-dimensional-array-in-python?page=1&tab=scoredesc#tab-top
 batch = pyglet.graphics.Batch()
@@ -252,8 +250,7 @@ def create_elements(dt):
 
 @win.event
 def on_draw():
-    win.clear() 
-    image.blit(0,0)
+    win.clear()    
     # interact with M5 Stack cite from "demo_vis.py"
     global moving_left, moving_right
     if sensor.get_value('accelerometer')['x'] > 0:
