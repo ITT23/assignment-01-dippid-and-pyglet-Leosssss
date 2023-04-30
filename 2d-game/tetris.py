@@ -11,7 +11,7 @@ sensor = SensorUDP(PORT)
 
 WINDOW_WIDTH = 300
 WINDOW_HEIGHT = 400
-WINDOW_TITLE = "Not Real Tetris"
+WINDOW_TITLE = "Not Real Tetris, Draw a Picture with Tetris Element!"
 SQUARE_LENGTH = 10 #length of one square
 START_POS_X = (WINDOW_WIDTH-(SQUARE_LENGTH*4))/2
 FALLING_SPEED = 10
@@ -65,12 +65,15 @@ def create_O(color):
     print(EL_O.position)
     def update(dt): # update element position, cite from ChatGPT. [Code segment illustrating 怎么更新rectangle的位置，每秒更新一次，高度减少 (How to update the position of a rectangle, decrease its height every second)] Retrieved from OpenAI, 2023, https://openai.com. Accessed 27 April 2023.
         if EL_O.y > 0:
-            for i in range(int(EL_O.width/10)-1):
-                if playground[len(playground)-int(EL_O.y/10)][int(EL_O.x/10)+i] != 1:
-                    EL_O.y -= FALLING_SPEED
-                else: 
-                    updatePlayground("O", EL_O.x, EL_O.y, EL_O.width)
-                    pyglet.clock.unschedule(update)
+            if playground[len(playground)-int(EL_O.y/10)][int(EL_O.x/10)] != 1 and playground[len(playground)-int(EL_O.y/10)][int(EL_O.x/10)+1] != 1:
+                EL_O.y -= FALLING_SPEED
+                if moving_left and EL_O.x > 0 and playground[len(playground)-int(EL_O.y/10)-1][int(EL_O.x/10)-1] != 1 and playground[len(playground)-int(EL_O.y/10)-2][int(EL_O.x/10)-1] != 1:
+                    EL_O.x -= MOVING_SPEED
+                if moving_right and EL_O.x < WINDOW_WIDTH-SQUARE_LENGTH*2 and playground[len(playground)-int(EL_O.y/10)-1][int(EL_O.x/10)+2] != 1 and playground[len(playground)-int(EL_O.y/10)-2][int(EL_O.x/10)+2] != 1:
+                    EL_O.x += MOVING_SPEED
+            else: 
+                updatePlayground("O", EL_O.x, EL_O.y, EL_O.width)
+                pyglet.clock.unschedule(update)
         else: 
             updatePlayground("O", EL_O.x, EL_O.y, EL_O.width)
             pyglet.clock.unschedule(update)
@@ -85,6 +88,12 @@ def create_L(color):
             if playground[len(playground)-int(EL_L_PART_BOTTOM.y/10)][int(EL_L_PART_BOTTOM.x/10)] != 1 and playground[len(playground)-int(EL_L_PART_BOTTOM.y/10)][int(EL_L_PART_BOTTOM.x/10)+1] != 1 and playground[len(playground)-int(EL_L_PART_BOTTOM.y/10)][int(EL_L_PART_BOTTOM.x/10)+2] != 1:
                 EL_L_PART_TOP.y -= FALLING_SPEED
                 EL_L_PART_BOTTOM.y -= FALLING_SPEED
+                if moving_left and EL_L_PART_BOTTOM.x > 0 and playground[len(playground)-int(EL_L_PART_BOTTOM.y/10)-1][int(EL_L_PART_BOTTOM.x/10)-1] != 1 and playground[len(playground)-int(EL_L_PART_TOP.y/10)-1][int(EL_L_PART_TOP.x/10)-1] != 1:
+                    EL_L_PART_TOP.x -= MOVING_SPEED
+                    EL_L_PART_BOTTOM.x -= MOVING_SPEED
+                if moving_right and EL_L_PART_BOTTOM.x < WINDOW_WIDTH-SQUARE_LENGTH*3 and playground[len(playground)-int(EL_L_PART_BOTTOM.y/10)-1][int(EL_L_PART_BOTTOM.x/10)+3] != 1 and playground[len(playground)-int(EL_L_PART_TOP.y/10)-1][int(EL_L_PART_TOP.x/10)+1] != 1:
+                    EL_L_PART_TOP.x += MOVING_SPEED
+                    EL_L_PART_BOTTOM.x += MOVING_SPEED
             else: 
                 updatePlayground("L", EL_L_PART_BOTTOM.x, EL_L_PART_BOTTOM.y, EL_L_PART_BOTTOM.width)
                 pyglet.clock.unschedule(update)
@@ -102,6 +111,12 @@ def create_J(color):
             if playground[len(playground)-int(EL_J_PART_BOTTOM.y/10)][int(EL_J_PART_BOTTOM.x/10)] != 1 and playground[len(playground)-int(EL_J_PART_BOTTOM.y/10)][int(EL_J_PART_BOTTOM.x/10)+1] != 1 and playground[len(playground)-int(EL_J_PART_BOTTOM.y/10)][int(EL_J_PART_BOTTOM.x/10)+2] != 1:
                 EL_J_PART_TOP.y -= FALLING_SPEED
                 EL_J_PART_BOTTOM.y -= FALLING_SPEED
+                if moving_left and EL_J_PART_BOTTOM.x > 0 and playground[len(playground)-int(EL_J_PART_BOTTOM.y/10)-1][int(EL_J_PART_BOTTOM.x/10)-1] != 1 and playground[len(playground)-int(EL_J_PART_TOP.y/10)-1][int(EL_J_PART_TOP.x/10)-1] != 1:
+                    EL_J_PART_TOP.x -= MOVING_SPEED
+                    EL_J_PART_BOTTOM.x -= MOVING_SPEED
+                if moving_right and EL_J_PART_BOTTOM.x < WINDOW_WIDTH-SQUARE_LENGTH*3 and playground[len(playground)-int(EL_J_PART_BOTTOM.y/10)-1][int(EL_J_PART_BOTTOM.x/10)+3] != 1 and playground[len(playground)-int(EL_J_PART_TOP.y/10)-1][int(EL_J_PART_TOP.x/10)+1] != 1:
+                    EL_J_PART_TOP.x += MOVING_SPEED
+                    EL_J_PART_BOTTOM.x += MOVING_SPEED
             else: 
                 updatePlayground("J", EL_J_PART_BOTTOM.x, EL_J_PART_BOTTOM.y, EL_J_PART_BOTTOM.width)
                 pyglet.clock.unschedule(update)
@@ -117,10 +132,18 @@ def create_Z(color):
     EL_Z_PART_BOTTOM = shapes.Rectangle(START_POS_X, WINDOW_HEIGHT-SQUARE_LENGTH*3, SQUARE_LENGTH, SQUARE_LENGTH, color=color, batch=batch)  
     def update(dt): # update element position, cite from ChatGPT. [Code segment illustrating 怎么更新rectangle的位置，每秒更新一次，高度减少 (How to update the position of a rectangle, decrease its height every second)] Retrieved from OpenAI, 2023, https://openai.com. Accessed 27 April 2023.
         if EL_Z_PART_BOTTOM.y > 0:
-            if playground[len(playground)-int(EL_Z_PART_BOTTOM.y/10)][int(EL_Z_PART_BOTTOM.x/10)] != 1 and playground[len(playground)-int(EL_Z_PART_MIDDLE.y/10)-1][int(EL_Z_PART_MIDDLE.x/10)+1] != 1 and playground[len(playground)-int(EL_Z_PART_MIDDLE.y/10)-1][int(EL_Z_PART_MIDDLE.x/10)+2] != 1:
+            if playground[len(playground)-int(EL_Z_PART_BOTTOM.y/10)][int(EL_Z_PART_BOTTOM.x/10)] != 1 and playground[len(playground)-int(EL_Z_PART_MIDDLE.y/10)][int(EL_Z_PART_MIDDLE.x/10)+1] != 1 and playground[len(playground)-int(EL_Z_PART_MIDDLE.y/10)][int(EL_Z_PART_MIDDLE.x/10)+2] != 1:
                 EL_Z_PART_TOP.y -= FALLING_SPEED
                 EL_Z_PART_MIDDLE.y -= FALLING_SPEED
                 EL_Z_PART_BOTTOM.y -= FALLING_SPEED
+                if moving_left and EL_Z_PART_MIDDLE.x > 0 and playground[len(playground)-int(EL_Z_PART_MIDDLE.y/10)-1][int(EL_Z_PART_MIDDLE.x/10)-1] != 1 and playground[len(playground)-int(EL_Z_PART_TOP.y/10)-1][int(EL_Z_PART_TOP.x/10)-1] != 1 and playground[len(playground)-int(EL_Z_PART_BOTTOM.y/10)-1][int(EL_Z_PART_BOTTOM.x/10)-1] != 1:
+                    EL_Z_PART_TOP.x -= MOVING_SPEED
+                    EL_Z_PART_MIDDLE.x -= MOVING_SPEED
+                    EL_Z_PART_BOTTOM.x -= MOVING_SPEED
+                if moving_right and EL_Z_PART_MIDDLE.x < WINDOW_WIDTH-SQUARE_LENGTH*3 and playground[len(playground)-int(EL_Z_PART_MIDDLE.y/10)-1][int(EL_Z_PART_MIDDLE.x/10)+3] != 1 and playground[len(playground)-int(EL_Z_PART_TOP.y/10)-1][int(EL_Z_PART_TOP.x/10)+1] != 1 and playground[len(playground)-int(EL_Z_PART_BOTTOM.y/10)-1][int(EL_Z_PART_BOTTOM.x/10)+1] != 1:
+                    EL_Z_PART_TOP.x += MOVING_SPEED
+                    EL_Z_PART_MIDDLE.x += MOVING_SPEED
+                    EL_Z_PART_BOTTOM.x += MOVING_SPEED
             else: 
                 updatePlayground("Z", EL_Z_PART_MIDDLE.x, EL_Z_PART_MIDDLE.y, EL_Z_PART_MIDDLE.width)
                 pyglet.clock.unschedule(update)
@@ -136,10 +159,18 @@ def create_S(color):
     EL_S_PART_BOTTOM = shapes.Rectangle(START_POS_X+SQUARE_LENGTH*2, WINDOW_HEIGHT-SQUARE_LENGTH*3, SQUARE_LENGTH, SQUARE_LENGTH, color=color, batch=batch)  
     def update(dt): # update element position, cite from ChatGPT. [Code segment illustrating 怎么更新rectangle的位置，每秒更新一次，高度减少 (How to update the position of a rectangle, decrease its height every second)] Retrieved from OpenAI, 2023, https://openai.com. Accessed 27 April 2023.
         if EL_S_PART_BOTTOM.y > 0:
-            if playground[len(playground)-int(EL_S_PART_BOTTOM.y/10)][int(EL_S_PART_BOTTOM.x/10)] != 1 and playground[len(playground)-int(EL_S_PART_MIDDLE.y/10)-1][int(EL_S_PART_MIDDLE.x/10)+1] != 1 and playground[len(playground)-int(EL_S_PART_MIDDLE.y/10)-1][int(EL_S_PART_MIDDLE.x/10)] != 1:
+            if playground[len(playground)-int(EL_S_PART_BOTTOM.y/10)][int(EL_S_PART_BOTTOM.x/10)] != 1 and playground[len(playground)-int(EL_S_PART_MIDDLE.y/10)][int(EL_S_PART_MIDDLE.x/10)] != 1 and playground[len(playground)-int(EL_S_PART_MIDDLE.y/10)][int(EL_S_PART_MIDDLE.x/10)+1] != 1:
                 EL_S_PART_TOP.y -= FALLING_SPEED
                 EL_S_PART_MIDDLE.y -= FALLING_SPEED
                 EL_S_PART_BOTTOM.y -= FALLING_SPEED
+                if moving_left and EL_S_PART_MIDDLE.x > 0 and playground[len(playground)-int(EL_S_PART_MIDDLE.y/10)-1][int(EL_S_PART_MIDDLE.x/10)-1] != 1 and playground[len(playground)-int(EL_S_PART_TOP.y/10)-1][int(EL_S_PART_TOP.x/10)-1] != 1 and playground[len(playground)-int(EL_S_PART_BOTTOM.y/10)-1][int(EL_S_PART_BOTTOM.x/10)-1] != 1:
+                    EL_S_PART_TOP.x -= MOVING_SPEED
+                    EL_S_PART_MIDDLE.x -= MOVING_SPEED
+                    EL_S_PART_BOTTOM.x -= MOVING_SPEED
+                if moving_right and EL_S_PART_MIDDLE.x < WINDOW_WIDTH-SQUARE_LENGTH*3 and playground[len(playground)-int(EL_S_PART_MIDDLE.y/10)-1][int(EL_S_PART_MIDDLE.x/10)+3] != 1 and playground[len(playground)-int(EL_S_PART_TOP.y/10)-1][int(EL_S_PART_TOP.x/10)+1] != 1 and playground[len(playground)-int(EL_S_PART_BOTTOM.y/10)-1][int(EL_S_PART_BOTTOM.x/10)+1] != 1:
+                    EL_S_PART_TOP.x += MOVING_SPEED
+                    EL_S_PART_MIDDLE.x += MOVING_SPEED
+                    EL_S_PART_BOTTOM.x += MOVING_SPEED
             else: 
                 updatePlayground("S", EL_S_PART_MIDDLE.x, EL_S_PART_MIDDLE.y, EL_S_PART_MIDDLE.width)
                 pyglet.clock.unschedule(update)
@@ -157,6 +188,12 @@ def create_T(color):
             if playground[len(playground)-int(EL_T_PART_BOTTOM.y/10)][int(EL_T_PART_BOTTOM.x/10)] != 1 and playground[len(playground)-int(EL_T_PART_BOTTOM.y/10)][int(EL_T_PART_BOTTOM.x/10)+1] != 1 and playground[len(playground)-int(EL_T_PART_BOTTOM.y/10)][int(EL_T_PART_BOTTOM.x/10)+2] != 1:
                 EL_T_PART_TOP.y -= FALLING_SPEED
                 EL_T_PART_BOTTOM.y -= FALLING_SPEED
+                if moving_left and EL_T_PART_BOTTOM.x > 0 and playground[len(playground)-int(EL_T_PART_BOTTOM.y/10)-1][int(EL_T_PART_BOTTOM.x/10)-1] != 1 and playground[len(playground)-int(EL_T_PART_TOP.y/10)-1][int(EL_T_PART_TOP.x/10)-1] != 1:
+                    EL_T_PART_TOP.x -= MOVING_SPEED
+                    EL_T_PART_BOTTOM.x -= MOVING_SPEED
+                if moving_right and EL_T_PART_BOTTOM.x < WINDOW_WIDTH-SQUARE_LENGTH*3 and playground[len(playground)-int(EL_T_PART_BOTTOM.y/10)-1][int(EL_T_PART_BOTTOM.x/10)+3] != 1 and playground[len(playground)-int(EL_T_PART_TOP.y/10)-1][int(EL_T_PART_TOP.x/10)+1] != 1:
+                    EL_T_PART_TOP.x += MOVING_SPEED
+                    EL_T_PART_BOTTOM.x += MOVING_SPEED
             else: 
                 updatePlayground("T", EL_T_PART_BOTTOM.x, EL_T_PART_BOTTOM.y, EL_T_PART_BOTTOM.width)
                 pyglet.clock.unschedule(update)
@@ -166,8 +203,7 @@ def create_T(color):
     pyglet.clock.schedule_interval(update, UPDATE_INTERVAL)
     return EL_T_PART_TOP, EL_T_PART_BOTTOM
 
-elements_list = ["I"]
-#elements_list = ["I","O","L","J","Z","S","T"]
+elements_list = ["I","O","L","J","Z","S","T"]
 
 def updatePlayground(element_index, pos_x, pos_y, el_width):
     if element_index == "I":
@@ -238,16 +274,3 @@ pyglet.clock.schedule_interval(create_elements,5)
     
 # run the pyglet application       
 pyglet.app.run()
-
-
-
-
-
-# interact with M5 Stack cite from "demo_event.py"
-# def handle_button_press(data):
-#    if int(data) == 1:
-#        print('button released')
-#    else:
-#        print('button pressed')
-
-# sensor.register_callback('button_2', handle_button_press)
