@@ -1,14 +1,10 @@
 import pyglet
 from pyglet import window,shapes
-import DIPPID
 from DIPPID import SensorUDP
 import numpy as np
 import random
-import time
 
 PORT = 5700
-sensor = SensorUDP(PORT)
-
 WINDOW_WIDTH = 300
 WINDOW_HEIGHT = 400
 WINDOW_TITLE = "Not Real Tetris, Draw a Picture with Tetris Element!"
@@ -17,6 +13,15 @@ START_POS_X = (WINDOW_WIDTH-(SQUARE_LENGTH*4))/2
 FALLING_SPEED = 10
 MOVING_SPEED = 10
 UPDATE_INTERVAL = 0.05
+# a set of colors
+ORANGE = (255,155,1)
+YELLOW = (255,255,1)
+RED = (255,1,1)
+BLUE = (1,1,255)
+GREEN = (1,255,1)
+# init a array with color codes, because i want to generate shapes with random color
+colors = np.array([ORANGE,YELLOW,RED,BLUE,GREEN])
+sensor = SensorUDP(PORT)
 
 # draw a window
 win = window.Window(WINDOW_WIDTH,WINDOW_HEIGHT,WINDOW_TITLE)
@@ -26,16 +31,6 @@ batch = pyglet.graphics.Batch()
 elements = []
 moving_left = False
 moving_right = False
-
-
-# a set of colors
-ORANGE = (255,155,1)
-YELLOW = (255,255,1)
-RED = (255,1,1)
-BLUE = (1,1,255)
-GREEN = (1,255,1)
-# init a array with color codes, because i want to generate shapes with random color
-colors = np.array([ORANGE,YELLOW,RED,BLUE,GREEN])
 
 # init a rectangle cite from: https://pyglet.readthedocs.io/en/latest/modules/shapes.html
 # square_element = shapes.Rectangle((WINDOW_WIDTH-SQUARE_LENGTH)/2, WINDOW_HEIGHT-SQUARE_LENGTH, SQUARE_LENGTH, SQUARE_LENGTH, color=colors[random.randint(0, len(colors)-1)], batch=batch)
@@ -242,7 +237,6 @@ def updatePlayground(element_index, pos_x, pos_y, el_width):
             print(playground[i][j], end=' ')
         print()
         
-
 def create_elements(dt):
     element_index = elements_list[random.randint(0, len(elements_list)-1)]
     if element_index == "I": create_element = create_I(colors[random.randint(0, len(colors)-1)])
