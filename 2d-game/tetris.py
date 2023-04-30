@@ -261,6 +261,12 @@ def on_draw():
         moving_left = False
     #print('capabilities: ', sensor.get_value('accelerometer')['x'], "; moving left: ", moving_left, "; moving right: ", moving_right)
     
+    # interact with M5 Stack cite from "demo_event.py"
+    # click button_1 to exit
+    def handle_button_1_press(data):
+        if int(data) == 0:
+            pyglet.app.exit()
+    sensor.register_callback('button_1', handle_button_1_press)
     for element in elements:
         batch.draw()
 
