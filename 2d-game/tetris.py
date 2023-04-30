@@ -265,6 +265,6 @@ def on_draw():
         batch.draw()
 
 pyglet.clock.schedule_interval(create_elements,5)
-    
+pyglet.gl.glClearColor(0.8,1,0.6,0.5) # change background color cite from: https://stackoverflow.com/questions/42470333/how-to-change-the-color-of-a-pyglet-window    
 # run the pyglet application       
 pyglet.app.run()
