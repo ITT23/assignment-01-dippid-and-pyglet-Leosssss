@@ -10,13 +10,13 @@ PORT = 5700
 sensor = SensorUDP(PORT)
 
 WINDOW_WIDTH = 300
-WINDOW_HEIGHT = 500
+WINDOW_HEIGHT = 400
 WINDOW_TITLE = "Not Real Tetris"
 SQUARE_LENGTH = 10 #length of one square
 START_POS_X = (WINDOW_WIDTH-(SQUARE_LENGTH*4))/2
 FALLING_SPEED = 10
-UPDATE_INTERVAL = 0.03
-NEED_NEW_ELEMENT = True
+MOVING_SPEED = 10
+UPDATE_INTERVAL = 0.05
 
 # draw a window
 win = window.Window(WINDOW_WIDTH,WINDOW_HEIGHT,WINDOW_TITLE)
@@ -24,6 +24,9 @@ win = window.Window(WINDOW_WIDTH,WINDOW_HEIGHT,WINDOW_TITLE)
 playground = [[0]*round(WINDOW_WIDTH/SQUARE_LENGTH) for i in range(round(WINDOW_HEIGHT/SQUARE_LENGTH))] # cite from: https://stackoverflow.com/questions/2397141/how-to-initialize-a-two-dimensional-array-in-python?page=1&tab=scoredesc#tab-top
 batch = pyglet.graphics.Batch()
 elements = []
+moving_left = False
+moving_right = False
+
 
 # a set of colors
 ORANGE = (255,155,1)
@@ -40,9 +43,13 @@ colors = np.array([ORANGE,YELLOW,RED,BLUE,GREEN])
 def create_I(color):#color = colors[random.randint(0, len(colors)-1)]
     EL_I = shapes.Rectangle(START_POS_X, WINDOW_HEIGHT-SQUARE_LENGTH, SQUARE_LENGTH*4, SQUARE_LENGTH, color=color, batch=batch)
     def update(dt): # update element position, cite from ChatGPT. [Code segment illustrating 怎么更新rectangle的位置，每秒更新一次，高度减少 (How to update the position of a rectangle, decrease its height every second)] Retrieved from OpenAI, 2023, https://openai.com. Accessed 27 April 2023.
-        if EL_I.y > 0:
+        if EL_I.y > 0: 
             if int(EL_I.y/10)>0 and playground[len(playground)-int(EL_I.y/10)][int(EL_I.x/10)] != 1 and int(EL_I.y/10)>0 and playground[len(playground)-int(EL_I.y/10)][int(EL_I.x/10)+1] != 1 and int(EL_I.y/10)>0 and playground[len(playground)-int(EL_I.y/10)][int(EL_I.x/10)+2] != 1 and int(EL_I.y/10)>0 and playground[len(playground)-int(EL_I.y/10)][int(EL_I.x/10)+3] != 1:
                 EL_I.y -= FALLING_SPEED
+                if moving_left and EL_I.x > 0 and playground[len(playground)-int(EL_I.y/10)-1][int(EL_I.x/10)-1] != 1:
+                    EL_I.x -= MOVING_SPEED
+                if moving_right and EL_I.x < WINDOW_WIDTH-SQUARE_LENGTH*4 and playground[len(playground)-int(EL_I.y/10)-1][int(EL_I.x/10)+4] != 1:
+                    EL_I.x += MOVING_SPEED
             else: 
                 updatePlayground("I", EL_I.x, EL_I.y, EL_I.width)
                 pyglet.clock.unschedule(update)
@@ -50,6 +57,7 @@ def create_I(color):#color = colors[random.randint(0, len(colors)-1)]
             updatePlayground("I", EL_I.x, EL_I.y, EL_I.width)
             pyglet.clock.unschedule(update)
     pyglet.clock.schedule_interval(update, UPDATE_INTERVAL)
+    
     return EL_I
 
 def create_O(color):
@@ -158,7 +166,8 @@ def create_T(color):
     pyglet.clock.schedule_interval(update, UPDATE_INTERVAL)
     return EL_T_PART_TOP, EL_T_PART_BOTTOM
 
-elements_list = ["I","O","L","J","Z","S","T"]
+elements_list = ["I"]
+#elements_list = ["I","O","L","J","Z","S","T"]
 
 def updatePlayground(element_index, pos_x, pos_y, el_width):
     if element_index == "I":
@@ -192,10 +201,10 @@ def updatePlayground(element_index, pos_x, pos_y, el_width):
         playground[len(playground)-2-int(pos_y/10)][int(pos_x/10)+1] = 1
         
         
-    for i in range(len(playground)):
-        for j in range(len(playground[i])):
-            print(playground[i][j], end=' ')
-        print()
+    #for i in range(len(playground)):
+     #   for j in range(len(playground[i])):
+      #      print(playground[i][j], end=' ')
+       # print()
         
 
 def create_elements(dt):
@@ -211,7 +220,17 @@ def create_elements(dt):
 
 @win.event
 def on_draw():
-    win.clear()
+    win.clear()    
+    # interact with M5 Stack cite from "demo_vis.py"
+    global moving_left, moving_right
+    if sensor.get_value('accelerometer')['x'] > 0:
+        moving_left = True
+        moving_right = False
+    else:
+        moving_right = True
+        moving_left = False
+    print('capabilities: ', sensor.get_value('accelerometer')['x'], "; moving left: ", moving_left, "; moving right: ", moving_right)
+    
     for element in elements:
         batch.draw()
 
