@@ -253,6 +253,8 @@ def on_draw():
     win.clear()    
     # interact with M5 Stack cite from "demo_vis.py"
     global moving_left, moving_right
+
+    # AS: this implementation makes it impossible to send a piece straight down
     if sensor.get_value('accelerometer')['x'] > 0:
         moving_left = True
         moving_right = False
@@ -263,6 +265,10 @@ def on_draw():
     
     # interact with M5 Stack cite from "demo_event.py"
     # click button_1 to exit
+
+    # AS: the function gets called, but the program does not exit
+    # why is the function inside of another function?
+    # why is the callback registered on every draw?
     def handle_button_1_press(data):
         if int(data) == 0:
             pyglet.app.exit()
@@ -270,7 +276,7 @@ def on_draw():
     for element in elements:
         batch.draw()
 
-pyglet.clock.schedule_interval(create_elements,5)
+pyglet.clock.schedule_interval(create_elements,3)
 pyglet.gl.glClearColor(0.8,1,0.6,0.5) # change background color cite from: https://stackoverflow.com/questions/42470333/how-to-change-the-color-of-a-pyglet-window    
 # run the pyglet application       
 pyglet.app.run()

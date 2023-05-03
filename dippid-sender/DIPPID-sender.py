@@ -18,7 +18,8 @@ sin_frequency = 1
 
 while True:
     y = np.sin(sin_frequency * x)
-    message = '{"coordinate(x,y)" : (' + str(x) + ',' + str(y) + ')}'
+    message = '{"coordinate(x,y)" : {"x" : ' + str(x) + ', "y" : ' + str(y) + '}}'
+    #message = '{"coordinate(x,y)" : (' + str(x) + ',' + str(y) + ')}'
     print(message)
     if counter%random.randint(7,10) == 0:
         print('button1 released')
